@@ -244,7 +244,7 @@ const ChatRoom = ({ roomId }) => {
         <div id="youtube-player" className="mb-4"></div>
 
         {/* Chat */}
-        <div className="lg:h-[520px] h-[500px] overflow-y-scroll flex flex-col gap-4 py-10 lg:px-8 px-2 rounded-xl z-10" ref={scroll}>
+        <div className="lg:h-[500px] overflow-y-scroll flex flex-col gap-4 py-10 lg:px-8 px-2 rounded-xl z-10" ref={scroll}>
             {chat.map((msg, index) => (
                 <div
                     key={index}
@@ -296,7 +296,7 @@ const ChatRoom = ({ roomId }) => {
         </div>
 
         {/* Message input */}
-        <div className="flex flex-row items-center space-x-5">
+        <div className=" fixed bottom-0 left-0 w-full md:w-[70vw] md:left-56 flex flex-row items-center space-x-5 p-3">
             <input
                 type="text"
                 value={message}
