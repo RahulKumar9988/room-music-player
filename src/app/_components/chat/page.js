@@ -19,7 +19,7 @@ const ChatRoom = ({ roomId }) => {
     const [videoTitle, setVideoTitle] = useState("Unknown video");
     const scroll = useRef()
     const [modal, setmodal] = useState(false);
-
+    const [copied, setCopied] = useState(false);
     const notificationTone = useRef(null);
 
     useEffect(() => {
@@ -148,6 +148,12 @@ const ChatRoom = ({ roomId }) => {
         }
     };
 
+    const handleCopy = () => {
+        navigator.clipboard.writeText(roomId);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000); // Hide after 2 seconds
+    };
+
     useEffect(() => {
         if (videoId && typeof window.YT !== "undefined") {
             onYouTubeIframeAPIReady();
@@ -214,10 +220,25 @@ const ChatRoom = ({ roomId }) => {
     <div className="h-[800px] w-[800px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute bottom-0 -left-32"></div>
     <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
     <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div>
-    <div className="text-white font-semibold text-center py-2 text-sm">
+    <div className="text-white font-semibold text-center py-2 text-sm flex flex-col items-center justify-center">
         <p>{roomUsers.length} users</p>
-        <p>Share code: {roomId}</p>
+        <div className="flex items-center space-x-2">
+            <p>Share code: {roomId}</p>
+            <button
+                className="px-2 py-1 bg-gray-700 text-white rounded text-xs"
+                onClick={handleCopy}
+            >
+                📋 Copy
+            </button>
+        </div>
     </div>
+
+    {/* Popup Notification */}
+    {copied && (
+        <div className="fixed bottom-5 right-5 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg">
+            ✅ Room code copied!
+        </div>
+    )}
 
     <div className="max-w-screen-lg w-full mx-auto rounded-xl relative z-10 lg:px-0 px-5">
 
