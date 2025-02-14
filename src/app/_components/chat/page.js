@@ -265,7 +265,7 @@ const ChatRoom = ({ roomId }) => {
         <div id="youtube-player" className="mb-4"></div>
 
           {/* Chat */}
-        <div className="lg:h-[520px] h-[500px] overflow-y-scroll flex flex-col gap-4 py-10 lg:px-8 px-2 rounded-xl z-10" ref={scroll}>
+        <div className="lg:h-[820px] h-[500px] overflow-y-scroll flex flex-col gap-4 py-10 lg:px-8 px-2 rounded-xl z-10" ref={scroll}>
             {chat.map((msg, index) => (
                 <div
                     key={index}
