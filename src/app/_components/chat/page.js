@@ -243,74 +243,57 @@ const ChatRoom = ({ roomId }) => {
         {/* Hidden YouTube player */}
         <div id="youtube-player" className="mb-4"></div>
 
-        {/* Chat */}
-        <div className=" h-[500px] overflow-y-scroll flex flex-col gap-4 py-10 lg:px-8 px-2 rounded-xl z-10" ref={scroll}>
-            {chat.map((msg, index) => (
-                <div
-                    key={index}
-                    className={`flex items-center ${msg.senderId === userId ? "justify-end" : "justify-start"}`}
-                >
-                    {msg.senderId !== userId && (
-                        <Image
-                            src="/heart.png"
-                            alt="User"
-                            width={40}
-                            height={40}
-                            className="mr-2 rounded-full bg-purple-500 p-2"
-                        />
+    {/* Chat Container */}
+    <div className="flex flex-col h-[70vh] w-full mx-auto overflow-y-scroll rounded-xl p-4">
+        {chat.map((msg, index) => (
+            <div key={index} className={`flex ${msg.senderId === userId ? "justify-end" : "justify-start"} mb-2`}>
+                {msg.senderId !== userId && (
+                    <Image
+                        src="/heart.png"
+                        alt="User"
+                        width={30}
+                        height={30}
+                        className="mr-2 rounded-full bg-purple-500 p-1"
+                    />
+                )}
+                <div className={`py-2 px-3 max-w-[80%] rounded-lg text-sm ${msg.senderId === userId ? "bg-purple-400 text-white" : "bg-purple-600"}`}>
+                    {msg.type === "text" && msg.message}
+                    {msg.type === "media" && (
+                        <>
+                            {msg.content?.startsWith("data:image") && (
+                                <img src={msg.content} alt="Shared media" className="max-w-full rounded-lg" />
+                            )}
+                            {msg.content?.startsWith("data:video") && (
+                                <video controls className="max-w-full rounded-lg">
+                                    <source src={msg.content} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            )}
+                        </>
                     )}
-                    <div
-                        className={`py-2 px-4 max-w-xs rounded-lg ${msg.senderId === userId ? "bg-purple-400 text-white" : "bg-purple-600"}`}
-                    >
-                        {msg.type === "text" && msg.message}
-                        {msg.type === "media" && (
-                            <>
-                                {msg.content?.startsWith("data:image") && (
-                                    <img src={msg.content} alt="Shared media" className="max-w-full rounded-lg" />
-                                )}
-
-                                {msg.content?.startsWith("data:video") && (
-                                    <video controls className="max-w-full rounded-lg">
-                                        <source src={msg.content} type="video/mp4" />
-                                        Your browser does not support the video tag.
-                                    </video>
-                                )}
-
-                                {msg.content?.startsWith("blob:") && (
-                                    <>
-                                        {msg.content?.includes("image") ? (
-                                            <img src={msg.content} alt="Shared media" className="max-w-full rounded-lg" />
-                                        ) : msg.content?.includes("video") ? (
-                                            <video controls className="max-w-full rounded-lg">
-                                                <source src={msg.content} type="video/mp4" />
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        ) : null}
-                                    </>
-                                )}
-                            </>
-                        )}
-                    </div>
                 </div>
-            ))}
-        </div>
+            </div>
+        ))}
+    </div>
 
-        {/* Message input */}
-        <div className="flex flex-row items-center space-x-5">
-            <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Type a message..."
-                className="w-full p-3 border border-gray-300 bg-transparent rounded-lg text-white  sm:mb-0"
-            />
-            <button
-                onClick={() => sendMessage("text")}
-                className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
-            >
-                Send
-            </button>
-        </div>
+    {/* Message Input */}
+    <div className="flex items-center w-full mx-auto p-2">
+        <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Type a message..."
+            className="flex-grow p-2 border border-gray-300 bg-transparent rounded-lg text-white text-sm"
+        />
+        <button
+            onClick={() => sendMessage("text")}
+            className="ml-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 text-sm"
+        >
+            Send
+        </button>
+    </div>
+
+
 
     </div>
 </div>
