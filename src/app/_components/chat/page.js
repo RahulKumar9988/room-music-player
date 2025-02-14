@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 
 const ChatRoom = ({ roomId }) => {
-    const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
+      const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
     // const socket = useMemo(() => io("http://localhost:3001"), []);
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
@@ -19,7 +19,7 @@ const ChatRoom = ({ roomId }) => {
     const [videoTitle, setVideoTitle] = useState("Unknown video");
     const scroll = useRef()
     const [modal, setmodal] = useState(false);
-    const [copied, setCopied] = useState(false);
+
     const notificationTone = useRef(null);
 
     useEffect(() => {
@@ -148,12 +148,6 @@ const ChatRoom = ({ roomId }) => {
         }
     };
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(roomId);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000); // Hide after 2 seconds
-    };
-
     useEffect(() => {
         if (videoId && typeof window.YT !== "undefined") {
             onYouTubeIframeAPIReady();
@@ -220,25 +214,10 @@ const ChatRoom = ({ roomId }) => {
     <div className="h-[800px] w-[800px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute bottom-0 -left-32"></div>
     <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
     <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div>
-    <div className="text-white font-semibold text-center py-2 text-sm flex flex-col items-center justify-center">
+    <div className="text-white font-semibold text-center py-2 text-sm">
         <p>{roomUsers.length} users</p>
-        <div className="flex items-center space-x-2">
-            <p>Share code: {roomId}</p>
-            <button
-                className="px-2 py-1 bg-gray-700 text-white rounded text-xs"
-                onClick={handleCopy}
-            >
-                📋 Copy
-            </button>
-        </div>
+        <p>Share code: {roomId}</p>
     </div>
-
-    {/* Popup Notification */}
-    {copied && (
-        <div className="fixed bottom-5 right-5 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg">
-            ✅ Room code copied!
-        </div>
-    )}
 
     <div className="max-w-screen-lg w-full mx-auto rounded-xl relative z-10 lg:px-0 px-5">
 
@@ -264,8 +243,8 @@ const ChatRoom = ({ roomId }) => {
         {/* Hidden YouTube player */}
         <div id="youtube-player" className="mb-4"></div>
 
-          {/* Chat */}
-        <div className="lg:h-[500px]  overflow-y-scroll flex flex-col gap-4 py-10 lg:px-8 px-2 rounded-xl z-10" ref={scroll}>
+        {/* Chat */}
+        <div className=" h-[500px] overflow-y-scroll flex flex-col gap-4 py-10 lg:px-8 px-2 rounded-xl z-10" ref={scroll}>
             {chat.map((msg, index) => (
                 <div
                     key={index}
@@ -317,7 +296,7 @@ const ChatRoom = ({ roomId }) => {
         </div>
 
         {/* Message input */}
-        <div className=" fixed bottom-0 left-0 w-full md:w-[70vw] md:left-56 flex flex-row items-center space-x-5  bg-black">
+        <div className="flex flex-row items-center space-x-5">
             <input
                 type="text"
                 value={message}
