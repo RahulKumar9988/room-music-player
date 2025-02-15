@@ -259,7 +259,7 @@ const ChatRoom = ({ roomId, userName }) => {
                     }`}
                 >
                     {/* Username with underline */}
-                    <p className="text-black text-sm font-bold mb-1">
+                    <p className="text-black text-sm font-bold">
                         {msg.userName}
                     </p>
 
