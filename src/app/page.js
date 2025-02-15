@@ -1,39 +1,77 @@
 "use client"
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 const Page = () => {
-  const router = useRouter()
- const [roomId, setroomId] = useState("")
+  const router = useRouter();
+  const [roomId, setRoomId] = useState("");
+  const [userName, setUserName] = useState("");
+  const [errors, setErrors] = useState({ roomId: "", userName: "" });
+
   const handleCreateRoom = () => {
     const newRoom = `room-${Math.random().toString(36).substring(7)}`;
-    router.push(`/room/${newRoom}`);
+    router.push(`/room/${newRoom}?user=${encodeURIComponent(userName)}`);
   };
+
+  const handleJoinRoom = () => {
+    let newErrors = { roomId: "", userName: "" };
+
+    if (!roomId) newErrors.roomId = "Room ID is required";
+    if (!userName) newErrors.userName = "Username is required";
+
+    setErrors(newErrors);
+
+    if (!newErrors.roomId && !newErrors.userName) {
+      console.log(userName, roomId);
+      router.push(`/room/${roomId}?user=${encodeURIComponent(userName)}`);
+    }
+  };
+
   return (
-   <div className=' w-full h-full bg-black overflow-hidden'>
-     <div className=' flex items-center justify-center max-w-screen-xl flex-col space-y-6 mx-auto h-screen'>
-      <div className=' max-w-screen-xl mx-auto flex items-center flex-col justify-center relative z-20'>
-        <h1 className='md:text-8xl text-3xl  font-bold text-transparent bg-clip-text bg-gradient-to-r font-serif from-purple-500 to-purple-400 z-20'>Chill Zone</h1>
-        <p className='lg:text-2xl text-xl font-bold text-white text-center'>music taste matters</p>
-        <Image src="/hugy.png" alt="music" width={100} height={100} className='absolute -top-8 -right-20 animate-pulse' />
-        <div className='absolute -bottom-8 -left-20  bg-gradient-to-r from-orange-100 to-yellow-100 w-[700px] 
-        h-[700px] rounded-full blur-3xl opacity-30 '></div>
-        <div className='absolute -top-8 -right-40  bg-gradient-to-r from-pink-100 to-red-100 w-[500px] 
-        h-[500px] rounded-full blur-3xl opacity-30 '></div>
+    <div className='w-full h-full bg-black overflow-hidden'>
+      <div className='flex items-center justify-center max-w-screen-xl flex-col space-y-6 mx-auto h-screen'>
+        <div className='max-w-screen-xl mx-auto flex items-center flex-col justify-center relative z-20'>
+          <h1 className='md:text-8xl text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r font-serif from-purple-500 to-purple-400 z-20'>Chill Zone</h1>
+          <p className='lg:text-2xl text-xl font-bold text-white text-center'>music taste matters</p>
+          <Image src="/hugy.png" alt="music" width={100} height={100} className='absolute -top-8 -right-20 animate-pulse' />
+          <div className='absolute -bottom-8 -left-20 bg-gradient-to-r from-orange-100 to-yellow-100 w-[700px] 
+          h-[700px] rounded-full blur-3xl opacity-30'></div>
+          <div className='absolute -top-8 -right-40 bg-gradient-to-r from-pink-100 to-red-100 w-[500px] 
+          h-[500px] rounded-full blur-3xl opacity-30'></div>
+        </div>
+
+        <div className='flex items-center flex-col space-y-6'>
+          <button className='bg-gradient-to-r px-10 w-full from-purple-500 z-30 to-purple-700
+          text-white py-3 rounded' onClick={handleCreateRoom}>Create a room</button>
+
+          <div className='flex items-center flex-col space-y-4 z-30 w-full'>
+            <input 
+              type="text" 
+              onChange={(e) => setRoomId(e.target.value)} 
+              value={roomId} 
+              placeholder='Enter room code' 
+              className={`border ${errors.roomId ? 'border-red-500' : 'border-gray-300'} rounded px-3 py-2 w-full`} 
+            />
+            {errors.roomId && <p className="text-red-500 text-sm">{errors.roomId}</p>}
+
+            <input 
+              type="text" 
+              onChange={(e) => setUserName(e.target.value)} 
+              value={userName} 
+              placeholder='Enter your name' 
+              className={`border ${errors.userName ? 'border-red-500' : 'border-gray-300'} rounded px-3 py-2 w-full`} 
+            />
+            {errors.userName && <p className="text-red-500 text-sm">{errors.userName}</p>}
+
+            <button className='bg-gradient-to-r px-10 from-purple-500 to-purple-700 text-white py-3 rounded' onClick={handleJoinRoom}>
+              Join a room
+            </button>
+          </div>
+        </div>
       </div>
-     <div className='flex items-center flex-col space-y-6' >
-     <button className='bg-gradient-to-r px-10 w-full from-purple-500 z-30 to-purple-700
-      text-white  py-3 rounded' onClick={handleCreateRoom}>Create a room</button>
-    <div className='flex items-center flex-col space-y-4 z-30'>
-    <input  type="text" onChange={(e) => setroomId(e.target.value)} value={roomId} placeholder='Enter room code' className='border border-gray-300 rounded px-3 py-2 ml-4 w-full' />
-    <button className='bg-gradient-to-r px-10 from-purple-500 to-purple-700
-      text-white  py-3 rounded' onClick={() => router.push(`/room/${roomId}`)} >Join a room</button>
     </div>
-     </div>
-    </div>
-   </div>
-  )
+  );
 }
 
-export default Page
+export default Page;

@@ -4,12 +4,13 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 
-const ChatRoom = ({ roomId }) => {
+const ChatRoom = ({ roomId, userName }) => {
       const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
     // const socket = useMemo(() => io("http://localhost:3001"), []);
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
     const [userId, setUserId] = useState("");
+    // const [userName, setUserName] = useState("");
     const [roomUsers, setRoomUsers] = useState([]);
     const [videoId, setVideoId] = useState("");
     const [player, setPlayer] = useState(null);
@@ -72,7 +73,7 @@ const ChatRoom = ({ roomId }) => {
             }
         });
 
-        socket.emit("join-room", roomId);
+        socket.emit("join-room", roomId, userName);
 
         return () => {
             socket.off("connect");
@@ -82,7 +83,7 @@ const ChatRoom = ({ roomId }) => {
             socket.off("pause-video");
             socket.off("video-state");
         };
-    }, [socket, player, roomId]);
+    }, [socket, player, roomId, userName]);
 
     const searchYouTube = async (query) => {
         const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API;
@@ -185,7 +186,7 @@ const ChatRoom = ({ roomId }) => {
 
     const sendMessage = (type = "text", content = "") => {
         if (type === "text" && message.trim()) {
-            const data = { roomId, type, message, senderId: userId };
+            const data = { roomId, type, message, senderId: userId, userName };
             socket.emit("send-message", data);
             setMessage(""); // Reset the input
         } else if (type === "media" && content) {
@@ -193,13 +194,6 @@ const ChatRoom = ({ roomId }) => {
             socket.emit("send-message", data);
         }
     };
-
-
-
-
-      
-
-
 
 
     useEffect(() => {
@@ -247,21 +241,44 @@ const ChatRoom = ({ roomId }) => {
     <div className="flex flex-col h-[70vh] w-full mx-auto overflow-y-scroll rounded-xl p-4">
         {chat.map((msg, index) => (
             <div key={index} className={`flex ${msg.senderId === userId ? "justify-end" : "justify-start"} mb-2`}>
+                
                 {msg.senderId !== userId && (
                     <Image
                         src="/heart.png"
                         alt="User"
                         width={30}
                         height={30}
-                        className="mr-2 rounded-full bg-purple-500 p-1"
+                        className="mr-2 h-7 rounded-full bg-purple-500 p-1"
                     />
+                    
                 )}
-                <div className={`py-2 px-3 max-w-[80%] rounded-lg text-sm ${msg.senderId === userId ? "bg-purple-400 text-white" : "bg-purple-600"}`}>
-                    {msg.type === "text" && msg.message}
+
+                <div
+                    className={`py-2 px-3 max-w-[80%] rounded-lg text-sm break-words ${
+                        msg.senderId === userId ? "bg-purple-400 text-white" : "bg-purple-600"
+                    }`}
+                >
+                    {/* Username with underline */}
+                    <p className="text-black text-xs font-semibold underline mb-1">
+                        {msg.userName}
+                    </p>
+
+                    {/* Message Content */}
+                    {msg.type === "text" && (
+                        <p className="whitespace-pre-wrap break-words">
+                            {msg.message}
+                        </p>
+                    )}
+
+                    {/* Media Handling */}
                     {msg.type === "media" && (
                         <>
                             {msg.content?.startsWith("data:image") && (
-                                <img src={msg.content} alt="Shared media" className="max-w-full rounded-lg" />
+                                <img
+                                    src={msg.content}
+                                    alt="Shared media"
+                                    className="max-w-full rounded-lg"
+                                />
                             )}
                             {msg.content?.startsWith("data:video") && (
                                 <video controls className="max-w-full rounded-lg">
@@ -272,18 +289,29 @@ const ChatRoom = ({ roomId }) => {
                         </>
                     )}
                 </div>
+
             </div>
         ))}
     </div>
 
     {/* Message Input */}
-    <div className="flex items-center w-full mx-auto p-2">
-        <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+    <div className="flex items-center w-full mx-auto">
+        <textarea
+            className="bg-black w-full h-10 p-2 border rounded-lg text-sm break-words whitespace-pre-wrap resize-none overflow-hidden max-h-[200px]"
             placeholder="Type a message..."
-            className="flex-grow p-2 border border-gray-300 bg-transparent rounded-lg text-white text-sm"
+            value={message}
+            onChange={(e) => {
+                setMessage(e.target.value);
+                e.target.style.height = "auto"; // Reset height
+                e.target.style.height = `${e.target.scrollHeight}px`; // Adjust height dynamically
+            }}
+            onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                    e.target.style.height = "auto"; // Reset after sending
+                }
+            }}
         />
         <button
             onClick={() => sendMessage("text")}
@@ -292,9 +320,6 @@ const ChatRoom = ({ roomId }) => {
             Send
         </button>
     </div>
-
-
-
     </div>
 </div>
 
