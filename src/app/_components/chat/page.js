@@ -208,7 +208,7 @@ const ChatRoom = ({ roomId, userName }) => {
     <div className="h-[800px] w-[800px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute bottom-0 -left-32"></div>
     <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
     <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div>
-    <div className="text-white font-semibold text-center py-2 text-sm">
+    <div className="text-white font-extrabold text-center py-2 text-sm">
         <p>{roomUsers.length} users</p>
         <p>Share code: {roomId}</p>
     </div>
