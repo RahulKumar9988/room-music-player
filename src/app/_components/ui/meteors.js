@@ -1,22 +1,30 @@
-"use client"
+"use client";
 
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 
 export const Meteors = ({ number = 20, className }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    const checkScreenSize = () => setIsMobile(window.innerWidth < 640);
-    checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
-    return () => window.removeEventListener("resize", checkScreenSize);
+    if (typeof window !== "undefined") {
+      const updateSize = () => {
+        setScreenSize({ width: window.innerWidth, height: window.innerHeight });
+        setIsMobile(window.innerWidth < 640);
+      };
+      updateSize();
+      window.addEventListener("resize", updateSize);
+      return () => window.removeEventListener("resize", updateSize);
+    }
   }, []);
+
+  if (screenSize.width === 0) return null; // Prevent SSR errors
 
   const meteorCount = isMobile ? Math.floor(number / 2) : number;
 
   return (
-    <div className="overflow-hidden absolute top-0 left-0 w-full h-full pointer-events-none z-10">
+    <>
       {new Array(meteorCount).fill(true).map((_, idx) => (
         <span
           key={"meteor" + idx}
@@ -26,13 +34,13 @@ export const Meteors = ({ number = 20, className }) => {
             className
           )}
           style={{
-            top: Math.random() * window.innerHeight + "px",
-            left: Math.random() * window.innerWidth + "px",
+            top: Math.random() * screenSize.height + "px",
+            left: Math.random() * screenSize.width + "px",
             animationDelay: Math.random() * (1 - 0.2) + 0.2 + "s",
             animationDuration: Math.floor(Math.random() * (10 - 4) + 4) + "s",
           }}
         ></span>
       ))}
-    </div>
+    </>
   );
 };
