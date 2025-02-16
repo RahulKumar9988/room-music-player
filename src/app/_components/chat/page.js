@@ -20,6 +20,7 @@ const ChatRoom = ({ roomId, userName }) => {
     const [videoTitle, setVideoTitle] = useState("Unknown video");
     const scroll = useRef()
     const [modal, setmodal] = useState(false);
+    const [isExitModalOpen, setIsExitModalOpen] = useState(false);
 
     const notificationTone = useRef(null);
 
@@ -195,6 +196,11 @@ const ChatRoom = ({ roomId, userName }) => {
         }
     };
 
+    const handleExitGroup = () => {
+        socket.emit("leaveGroup", { userId });
+        console.log("User has left the group!");
+        window.location.href = "/";
+    };
 
     useEffect(() => {
         if (scroll.current) {
@@ -202,18 +208,69 @@ const ChatRoom = ({ roomId, userName }) => {
         }
     }, [chat]);
 
+    const copyRoomId = () => {
+        navigator.clipboard.writeText(roomId);
+    }
+
     return (
         <>
-       <div className="flex flex-col h-screen w-screen bg-black text-white py-2 relative overflow-hidden overflow-y-hidden">
-    <div className="h-[800px] w-[800px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute bottom-0 -left-32"></div>
-    <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
-    <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div>
-    <div className="text-white font-semibold text-center py-2 text-sm">
-        <p>{roomUsers.length} users</p>
-        <p>Share code: {roomId}</p>
-    </div>
+        <div className="bg-custom-gradient flex flex-col h-screen w-screen text-white py-2 relative overflow-hidden overflow-y-hidden ">
+            <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
+            {/* <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div> */}
+            <div className="text-white text-center py-1 text-sm">
+                <div className="flex justify-around font-semibold  items-center">
+                    <div className="flex flex-col justify-between items-center">                        
+                        <p>{roomUsers.length} users</p>
+                        <p>Share code: {roomId}</p>
+                    </div>
+                    <>
+                        {/* Exit Room Button */}
+                       <div className="flex flex-col">
+                            <button 
+                                className="m-2 px-2 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-800" 
+                                onClick={copyRoomId}>
+                                Copy
+                            </button>
 
-    <div className="max-w-screen-lg w-full mx-auto rounded-xl relative z-10 lg:px-0 px-5">
+                            <button 
+                                className="bg-red-500 px-3 py-1 text-sm rounded-lg hover:bg-red-700 transition"
+                                onClick={() => setIsExitModalOpen(true)}
+                            >
+                                Exit room
+                            </button>
+                       </div>
+
+                        {/* Exit Confirmation Modal */}
+                        {isExitModalOpen && (
+                            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-80 z-50">
+                                <div className=" w-72 bg-purple-800 p-5 rounded-lg shadow-lg text-center">
+                                    <p className="text-lg font-semibold mb-4 text-black">
+                                        Are you sure you want to leave the group?
+                                    </p>
+                                    <div className="flex justify-center gap-4">
+                                        <button
+                                            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                                            onClick={() => setIsExitModalOpen(false)}
+                                        >
+                                            No
+                                        </button>
+                                        <button
+                                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
+                                            onClick={handleExitGroup}
+                                        >
+                                            Yes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                    
+                </div>
+            </div>
+
+
+        <div className="max-w-screen-lg w-full mx-auto rounded-xl relative z-10 lg:px-0 px-5">
 
         <div className="flex w-full items-center justify-between lg:py-5 py-2 px-5 bg-purple-600 rounded-xl z-20">
             <div className="flex items-center space-x-3">
@@ -259,7 +316,7 @@ const ChatRoom = ({ roomId, userName }) => {
                     }`}
                 >
                     {/* Username with underline */}
-                    <p className="text-black text-xs font-semibold underline mb-1">
+                    <p className="text-black text-sm font-bold">
                         {msg.userName}
                     </p>
 

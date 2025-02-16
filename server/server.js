@@ -36,6 +36,16 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("leaveGroup", ({ userId }) => {
+    console.log(`User ${userId} has left the group`);
+    
+    // Broadcast to all users that this user has left
+    socket.broadcast.emit("userLeft", { userId });
+
+    // Disconnect the socket (optional)
+    socket.disconnect();
+  });
+
   // Handle video play event
   socket.on("play-video", (roomId, videoId, videoTitle) => {
     if (!videoId) {
