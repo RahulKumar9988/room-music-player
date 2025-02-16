@@ -5,11 +5,12 @@ import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 
 const ChatRoom = ({ roomId, userName }) => {
-      const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
+    const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
     // const socket = useMemo(() => io("http://localhost:3001"), []);
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
     const [userId, setUserId] = useState("");
+    const [copied, setCopied] = useState(false);
     // const [userName, setUserName] = useState("");
     const [roomUsers, setRoomUsers] = useState([]);
     const [videoId, setVideoId] = useState("");
@@ -21,7 +22,6 @@ const ChatRoom = ({ roomId, userName }) => {
     const scroll = useRef()
     const [modal, setmodal] = useState(false);
     const [isExitModalOpen, setIsExitModalOpen] = useState(false);
-
     const notificationTone = useRef(null);
 
     useEffect(() => {
@@ -29,6 +29,21 @@ const ChatRoom = ({ roomId, userName }) => {
         setUserId(id);
     }, []);
 
+
+    useEffect(() => {
+        const handleBackButton = (event) => {
+            event.preventDefault(); // Prevents immediate navigation
+            setIsExitModalOpen(true); // Open exit confirmation modal
+            window.history.pushState(null, "", window.location.href); // Prevent going back
+        };
+
+        window.history.pushState(null, "", window.location.href);
+        window.addEventListener("popstate", handleBackButton);
+
+        return () => {
+            window.removeEventListener("popstate", handleBackButton);
+        };
+    }, []);
 
     useEffect(() => {
         if (!socket) return;
@@ -211,7 +226,11 @@ const ChatRoom = ({ roomId, userName }) => {
 
     const copyRoomId = () => {
         navigator.clipboard.writeText(roomId);
-    }
+        setCopied(true);
+
+        // Reset after 1.5 seconds
+        setTimeout(() => setCopied(false), 1500);
+    };
 
     return (
         <>
@@ -234,10 +253,12 @@ const ChatRoom = ({ roomId, userName }) => {
                                 Exit room
                             </button>
 
-                            <button 
-                               className="bg-slate-950 m-1 border-2 px-3 py-1 text-sm rounded-lg hover:bg-red-700 transition"
-                                onClick={copyRoomId}>
-                                Copy
+                            <button
+                                className={`bg-slate-950 m-1 border-2 px-3 py-1 text-sm rounded-lg transition-all duration-300 
+                                ${copied ? "bg-black" : "hover:bg-purple-950"}`}
+                                onClick={copyRoomId}
+                            >
+                                {copied ? "Copied!" : "Copy"}
                             </button>
 
                        </div>
@@ -245,7 +266,7 @@ const ChatRoom = ({ roomId, userName }) => {
                         {/* Exit Confirmation Modal */}
                         {isExitModalOpen && (
                             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-80 z-50">
-                                <div className=" w-72 bg-purple-800 p-5 rounded-lg shadow-lg text-center">
+                                <div className="w-72 bg-white p-5 rounded-lg shadow-lg text-center">
                                     <p className="text-lg font-semibold mb-4 text-black">
                                         Are you sure you want to leave the group?
                                     </p>
