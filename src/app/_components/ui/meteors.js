@@ -24,7 +24,7 @@ export const Meteors = ({ number = 20, className }) => {
   const meteorCount = isMobile ? Math.floor(number / 2) : number;
 
   return (
-    <>
+    <div className="overflow-hidden absolute inset-0">
       {new Array(meteorCount).fill(true).map((_, idx) => (
         <span
           key={"meteor" + idx}
@@ -41,6 +41,6 @@ export const Meteors = ({ number = 20, className }) => {
           }}
         ></span>
       ))}
-    </>
+    </div>
   );
 };
