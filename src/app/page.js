@@ -31,7 +31,7 @@ const Page = () => {
   };
 
   return (
-    <div className='w-full h-full bg-black overflow-hidden'>
+    <div className='w-full bg-black overflow-hidden'>
       <StarsBackground/>
       <Meteors/>      
       <div className='flex items-center justify-center max-w-screen-xl flex-col space-y-6 mx-auto h-screen'>
