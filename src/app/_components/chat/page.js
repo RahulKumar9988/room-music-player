@@ -30,6 +30,21 @@ const ChatRoom = ({ roomId, userName }) => {
     }, []);
 
     useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (!document.hidden) {
+                // User switched back to the tab
+                setIsExitModalOpen(true);
+            }
+        };
+    
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+        };
+    }, []);
+
+    useEffect(() => {
         if (!socket) return;
 
         socket.on("connect", () => {
