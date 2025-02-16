@@ -227,17 +227,18 @@ const ChatRoom = ({ roomId, userName }) => {
                         {/* Exit Room Button */}
                        <div className="flex flex-col">
                             <button 
-                                className="m-2 px-2 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-800" 
-                                onClick={copyRoomId}>
-                                Copy
-                            </button>
-
-                            <button 
                                 className="bg-red-500 px-3 py-1 text-sm rounded-lg hover:bg-red-700 transition"
                                 onClick={() => setIsExitModalOpen(true)}
                             >
                                 Exit room
                             </button>
+
+                            <button 
+                                className="m-2 px-2 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-800" 
+                                onClick={copyRoomId}>
+                                Copy
+                            </button>
+                            
                        </div>
 
                         {/* Exit Confirmation Modal */}
