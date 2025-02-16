@@ -247,7 +247,7 @@ const ChatRoom = ({ roomId, userName }) => {
                         {/* Exit Room Button */}
                        <div className="flex flex-col">
                             <button 
-                                className="bg-red-500 px-3 py-1 text-sm rounded-lg hover:bg-red-700 transition"
+                                className="bg-red-600 px-3 py-1 text-sm rounded-lg hover:bg-red-700 transition"
                                 onClick={() => setIsExitModalOpen(true)}
                             >
                                 Exit room
@@ -266,8 +266,8 @@ const ChatRoom = ({ roomId, userName }) => {
                         {/* Exit Confirmation Modal */}
                         {isExitModalOpen && (
                             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-80 z-50">
-                                <div className="w-72 bg-white p-5 rounded-lg shadow-lg text-center">
-                                    <p className="text-lg font-semibold mb-4 text-black">
+                                <div className="w-72 bg-white border-[1px] text-black p-5 rounded-lg shadow-lg text-center">
+                                    <p className="text-lg font-semibold mb-4">
                                         Are you sure you want to leave the group?
                                     </p>
                                     <div className="flex justify-center gap-4">
