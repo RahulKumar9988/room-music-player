@@ -218,10 +218,10 @@ const ChatRoom = ({ roomId, userName }) => {
             <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
             {/* <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div> */}
             <div className="text-white text-center py-1 text-sm">
-                <div className="flex justify-around font-semibold  items-center">
+                <div className="flex justify-around items-center">
                     <div className="flex flex-col justify-between items-center">                        
                         <p>{roomUsers.length} users</p>
-                        <p>Share code: {roomId}</p>
+                        <p>Share code: <span className="font-semibold">{roomId}</span></p>
                     </div>
                     <>
                         {/* Exit Room Button */}
@@ -234,11 +234,11 @@ const ChatRoom = ({ roomId, userName }) => {
                             </button>
 
                             <button 
-                                className="m-2 px-2 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-800" 
+                               className="bg-slate-950 m-1 border-2 px-3 py-1 text-sm rounded-lg hover:bg-red-700 transition"
                                 onClick={copyRoomId}>
                                 Copy
                             </button>
-                            
+
                        </div>
 
                         {/* Exit Confirmation Modal */}
