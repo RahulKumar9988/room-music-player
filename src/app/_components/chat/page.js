@@ -241,7 +241,7 @@ const ChatRoom = ({ roomId, userName }) => {
                 <div className="flex justify-around items-center">
                     <div className="flex flex-col justify-between items-center">                        
                         <p>{roomUsers.length} users</p>
-                        <p>Share code: <span className="font-semibold">{roomId}</span></p>
+                        <p>Code: <span className="font-semibold">{roomId}</span></p>
                     </div>
                     <>
                         {/* Exit Room Button */}
@@ -299,7 +299,7 @@ const ChatRoom = ({ roomId, userName }) => {
             <div className="flex items-center space-x-3">
                 {videoId ? (
                     <div>
-                        <span>{videoTitle?.length > 20 ? videoTitle?.slice(0, 20) : ""}</span>
+                        {videoTitle?.length > 20 ? videoTitle?.slice(0, 20) : ""}
                         <button
                             className={`px-4 py-2 ${isPlaying ? "bg-purple-900" : "bg-purple-300"} text-white rounded-lg`}
                             onClick={handlePlayPause}
