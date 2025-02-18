@@ -220,7 +220,7 @@ const ChatRoom = ({ roomId , userName}) => {
 
     return (
         <>
-        <div className="bg-custom-gradient flex flex-col h-full w-screen text-white relative overflow-hidden overflow-y-hidden py-2">
+        <div className="bg-custom-gradient flex flex-col h-[100vh] w-screen text-white relative overflow-hidden overflow-y-hidden py-2">
             <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
             {/* <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div> */}
             

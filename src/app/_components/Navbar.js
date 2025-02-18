@@ -1,37 +1,61 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // ✅ Correct import for App Router
 
 const Navbar = ({ roomUsers, roomId, handleExitGroup, copyRoomId }) => {
     const [isExitModalOpen, setIsExitModalOpen] = useState(false);
     const [copied, setCopied] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+        const handleBackButton = (event) => {
+            event.preventDefault();
+            setIsExitModalOpen(true);
+            window.history.pushState(null, "", window.location.href); // Prevent default navigation
+        };
+
+        window.history.pushState(null, "", window.location.href); // Initialize history state
+        window.addEventListener("popstate", handleBackButton);
+
+        return () => {
+            window.removeEventListener("popstate", handleBackButton);
+        };
+    }, []);
+
+    const handleExitConfirm = () => {
+        handleExitGroup();
+        router.push("/");
+    };
 
     return (
-        <div className="w-full text-white text-center py-1 text-sm fixed top-0 left-0 z-50">
-            <div className="flex justify-around items-center">
-                <div className="flex flex-col justify-between items-center">
-                    <p>{roomUsers.length} users</p>
-                    <p>Code: <span className="font-semibold">{roomId}</span></p>
-                </div>
-                <div className="flex flex-col">
-                    <button 
-                        className="bg-red-600 px-3 py-1 text-sm rounded-lg hover:bg-red-700 transition"
-                        onClick={() => setIsExitModalOpen(true)}
-                    >
-                        Exit room
-                    </button>
-                    <button
-                        className={`bg-slate-950 m-1 border-2 px-3 py-1 text-sm rounded-lg transition-all duration-300 
-                        ${copied ? "bg-black" : "hover:bg-purple-950"}`}
-                        onClick={() => {
-                            copyRoomId();
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 2000);
-                        }}
-                    >
-                        {copied ? "Copied!" : "Copy"}
-                    </button>
+        <>
+            <div className="w-full text-white text-center py-1 text-sm fixed top-0 left-0 z-50">
+                <div className="flex justify-around items-center">
+                    <div className="flex flex-col justify-between items-center">
+                        <p>{roomUsers.length} users</p>
+                        <p>Code: <span className="font-semibold">{roomId}</span></p>
+                    </div>
+                    <div className="flex flex-col">
+                        <button 
+                            className="bg-red-600 px-3 py-1 text-sm rounded-lg hover:bg-red-700 transition"
+                            onClick={() => setIsExitModalOpen(true)}
+                        >
+                            Exit room
+                        </button>
+                        <button
+                            className={`bg-slate-950 m-1 border-2 px-3 py-1 text-sm rounded-lg transition-all duration-300 
+                            ${copied ? "bg-black" : "hover:bg-purple-950"}`}
+                            onClick={() => {
+                                copyRoomId();
+                                setCopied(true);
+                                setTimeout(() => setCopied(false), 2000);
+                            }}
+                        >
+                            {copied ? "Copied!" : "Copy"}
+                        </button>
+                    </div>
                 </div>
             </div>
-
+            
             {isExitModalOpen && (
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-80 z-50">
                     <div className="w-72 bg-white border-[1px] text-black p-5 rounded-lg shadow-lg text-center">
@@ -47,7 +71,7 @@ const Navbar = ({ roomUsers, roomId, handleExitGroup, copyRoomId }) => {
                             </button>
                             <button
                                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
-                                onClick={handleExitGroup}
+                                onClick={handleExitConfirm}
                             >
                                 Yes
                             </button>
@@ -55,7 +79,7 @@ const Navbar = ({ roomUsers, roomId, handleExitGroup, copyRoomId }) => {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 
