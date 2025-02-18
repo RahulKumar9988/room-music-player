@@ -34,9 +34,9 @@ const Page = () => {
     <div className='w-full bg-black overflow-hidden'>
       <StarsBackground/>
       <Meteors/>      
-      <div className='flex items-center justify-center max-w-screen-xl flex-col space-y-6 mx-auto h-screen'>
+      <div className='flex items-center justify-center max-w-screen-xl flex-col space-y-20 mx-auto h-screen overflow-hidden'>
         <div className='max-w-screen-xl mx-auto flex items-center flex-col justify-center relative z-20'>
-          <h1 className='md:text-8xl text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r font-serif from-purple-500 to-purple-400 z-20'>Chill Zone</h1>
+          <h1 className='md:text-8xl text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r font-serif from-purple-500 to-purple-400 z-20'>Chill Zone</h1>
           <p className='lg:text-2xl text-xl font-bold text-white text-center'>music taste matters</p>
           <Image src="/hugy.png" alt="music" width={100} height={100} className='absolute -top-8 -right-20 animate-pulse' />
           

@@ -234,7 +234,7 @@ const ChatRoom = ({ roomId , userName}) => {
 
         <div className="max-w-screen-lg w-full mx-auto rounded-xl relative z-10 lg:px-0 px-5">
 
-        <div className=" mt-20 h-10 flex w-full items-center justify-between lg:py-5 py-2 px-5 bg-purple-600 rounded-xl z-20">
+        <div className="mt-24 h-10 flex w-full items-center justify-between lg:py-5 py-2 px-5 bg-purple-600 rounded-xl z-20">
             <div className="flex items-center space-x-3">
                 {videoId ? (
                     <div>
