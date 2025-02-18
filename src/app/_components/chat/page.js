@@ -4,8 +4,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 
-const ChatRoom = ({ roomId, userName }) => {
-    const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
+const ChatRoom = ({ roomId , userName}) => {
+      const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
     // const socket = useMemo(() => io("http://localhost:3001"), []);
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
@@ -27,22 +27,6 @@ const ChatRoom = ({ roomId, userName }) => {
     useEffect(() => {
         const id = uuidv4();
         setUserId(id);
-    }, []);
-
-
-    useEffect(() => {
-        const handleBackButton = (event) => {
-            event.preventDefault(); // Prevents immediate navigation
-            setIsExitModalOpen(true); // Open exit confirmation modal
-            window.history.pushState(null, "", window.location.href); // Prevent going back
-        };
-
-        window.history.pushState(null, "", window.location.href);
-        window.addEventListener("popstate", handleBackButton);
-
-        return () => {
-            window.removeEventListener("popstate", handleBackButton);
-        };
     }, []);
 
     useEffect(() => {
@@ -102,20 +86,6 @@ const ChatRoom = ({ roomId, userName }) => {
         };
     }, [socket, player, roomId, userName]);
 
-    const searchYouTube = async (query) => {
-        const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API;
-        try {
-            const response = await fetch(
-                `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&key=${API_KEY}`
-            );
-            const data = await response.json();
-            console.log(data)
-            setSearchResults(data.items);
-        } catch (error) {
-            console.error("Error fetching YouTube data:", error);
-        }
-    };
-
     useEffect(() => {
         if (typeof window.YT === "undefined") {
             const script = document.createElement("script");
@@ -129,6 +99,32 @@ const ChatRoom = ({ roomId, userName }) => {
             window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
         }
     }, []);
+
+    useEffect(() => {
+        if (scroll.current) {
+            scroll.current.scrollTop = scroll.current.scrollHeight;
+        }
+    }, [chat]);
+
+    useEffect(() => {
+        if (videoId && typeof window.YT !== "undefined") {
+            onYouTubeIframeAPIReady();
+        }
+    }, [videoId]);
+
+    const searchYouTube = async (query) => {
+        const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API;
+        try {
+            const response = await fetch(
+                `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&key=${API_KEY}`
+            );
+            const data = await response.json();
+            console.log(data)
+            setSearchResults(data.items);
+        } catch (error) {
+            console.error("Error fetching YouTube data:", error);
+        }
+    };
 
     const onYouTubeIframeAPIReady = () => {
         if (videoId) {
@@ -165,12 +161,6 @@ const ChatRoom = ({ roomId, userName }) => {
             });
         }
     };
-
-    useEffect(() => {
-        if (videoId && typeof window.YT !== "undefined") {
-            onYouTubeIframeAPIReady();
-        }
-    }, [videoId]);
 
     const handlePlayPause = () => {
         if (isPlaying) {
@@ -218,12 +208,6 @@ const ChatRoom = ({ roomId, userName }) => {
         window.location.href = "/";
     };
 
-    useEffect(() => {
-        if (scroll.current) {
-            scroll.current.scrollTop = scroll.current.scrollHeight;
-        }
-    }, [chat]);
-
     const copyRoomId = () => {
         navigator.clipboard.writeText(roomId);
         setCopied(true);
@@ -231,13 +215,14 @@ const ChatRoom = ({ roomId, userName }) => {
         // Reset after 1.5 seconds
         setTimeout(() => setCopied(false), 1500);
     };
+    
 
     return (
         <>
-        <div className="bg-custom-gradient flex flex-col h-screen w-screen text-white py-2 relative overflow-hidden overflow-y-hidden ">
+        <div className="bg-custom-gradient flex flex-col h-screen w-screen text-white relative overflow-hidden overflow-y-hidden ">
             <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
             {/* <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div> */}
-            <div className="text-white text-center py-1 text-sm">
+            <div className=" fixed w-full text-white text-center py-1 text-sm">
                 <div className="flex justify-around items-center">
                     <div className="flex flex-col justify-between items-center">                        
                         <p>{roomUsers.length} users</p>
@@ -295,7 +280,7 @@ const ChatRoom = ({ roomId, userName }) => {
 
         <div className="max-w-screen-lg w-full mx-auto rounded-xl relative z-10 lg:px-0 px-5">
 
-        <div className="flex w-full items-center justify-between lg:py-5 py-2 px-5 bg-purple-600 rounded-xl z-20">
+        <div className="mt-20 flex w-full items-center justify-between lg:py-5 py-2 px-5 bg-purple-600 rounded-xl z-20">
             <div className="flex items-center space-x-3">
                 {videoId ? (
                     <div>
