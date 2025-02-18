@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
+import Navbar from "../Navbar";
 
 const ChatRoom = ({ roomId , userName}) => {
       const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
@@ -219,68 +220,21 @@ const ChatRoom = ({ roomId , userName}) => {
 
     return (
         <>
-        <div className="bg-custom-gradient flex flex-col h-screen w-screen text-white relative overflow-hidden overflow-y-hidden py-2">
+        <div className="bg-custom-gradient flex flex-col h-full w-screen text-white relative overflow-hidden overflow-y-hidden py-2">
             <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
             {/* <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div> */}
-            <div className="w-full text-white text-center py-1 text-sm">
-                <div className="flex justify-around items-center ">
-                    <div className="flex flex-col justify-between items-center">                        
-                        <p>{roomUsers.length} users</p>
-                        <p>Code: <span className="font-semibold">{roomId}</span></p>
-                    </div>
-                    <>
-                        {/* Exit Room Button */}
-                       <div className="flex flex-col">
-                            <button 
-                                className="bg-red-600 px-3 py-1 text-sm rounded-lg hover:bg-red-700 transition"
-                                onClick={() => setIsExitModalOpen(true)}
-                            >
-                                Exit room
-                            </button>
-
-                            <button
-                                className={`bg-slate-950 m-1 border-2 px-3 py-1 text-sm rounded-lg transition-all duration-300 
-                                ${copied ? "bg-black" : "hover:bg-purple-950"}`}
-                                onClick={copyRoomId}
-                            >
-                                {copied ? "Copied!" : "Copy"}
-                            </button>
-
-                       </div>
-
-                        {/* Exit Confirmation Modal */}
-                        {isExitModalOpen && (
-                            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-80 z-50">
-                                <div className="w-72 bg-white border-[1px] text-black p-5 rounded-lg shadow-lg text-center">
-                                    <p className="text-lg font-semibold mb-4">
-                                        Are you sure you want to leave the group?
-                                    </p>
-                                    <div className="flex justify-center gap-4">
-                                        <button
-                                            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-                                            onClick={() => setIsExitModalOpen(false)}
-                                        >
-                                            No
-                                        </button>
-                                        <button
-                                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
-                                            onClick={handleExitGroup}
-                                        >
-                                            Yes
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </>
-                    
-                </div>
-            </div>
+            
+            <Navbar 
+                roomUsers={roomUsers} 
+                roomId={roomId} 
+                handleExitGroup={handleExitGroup} 
+                copyRoomId={copyRoomId} 
+            />
 
 
         <div className="max-w-screen-lg w-full mx-auto rounded-xl relative z-10 lg:px-0 px-5">
 
-        <div className="flex w-full items-center justify-between lg:py-5 py-2 px-5 bg-purple-600 rounded-xl z-20">
+        <div className=" mt-20 h-10 flex w-full items-center justify-between lg:py-5 py-2 px-5 bg-purple-600 rounded-xl z-20">
             <div className="flex items-center space-x-3">
                 {videoId ? (
                     <div>
@@ -288,7 +242,7 @@ const ChatRoom = ({ roomId , userName}) => {
                         <button
                             className={`px-4 py-2 ${isPlaying ? "bg-purple-900" : "bg-purple-300"} text-white rounded-lg`}
                             onClick={handlePlayPause}
-                        >
+                        >   
                             {isPlaying ? "Pause" : "Play"}
                         </button>
                     </div>
@@ -360,7 +314,7 @@ const ChatRoom = ({ roomId , userName}) => {
     </div>
 
     {/* Message Input */}
-    <div className="flex items-center w-full mx-auto">
+    <div className="flex items-center w-full mx-auto h-10">
         <textarea
             className="bg-black w-full h-10 p-2 border rounded-lg text-sm break-words whitespace-pre-wrap resize-none overflow-hidden max-h-[200px]"
             placeholder="Type a message..."
