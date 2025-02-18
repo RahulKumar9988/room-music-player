@@ -28,7 +28,7 @@ const Navbar = ({ roomUsers, roomId, handleExitGroup, copyRoomId }) => {
 
     return (
         <>
-            <div className="w-full text-white text-center py-1 text-sm fixed top-0 left-0 z-50">
+            <div className="bg-custom-gradient w-full text-white text-center py-1 text-sm fixed top-0 left-0 z-50">
                 <div className="flex justify-around items-center">
                     <div className="flex flex-col justify-between items-center">
                         <p>{roomUsers.length} users</p>
