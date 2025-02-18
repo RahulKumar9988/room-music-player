@@ -219,11 +219,11 @@ const ChatRoom = ({ roomId , userName}) => {
 
     return (
         <>
-        <div className="bg-custom-gradient flex flex-col h-screen w-screen text-white relative overflow-hidden overflow-y-hidden ">
+        <div className="bg-custom-gradient flex flex-col h-screen w-screen text-white relative overflow-hidden overflow-y-hidden py-2">
             <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
             {/* <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div> */}
-            <div className=" fixed w-full text-white text-center py-1 text-sm">
-                <div className="flex justify-around items-center">
+            <div className="w-full text-white text-center py-1 text-sm">
+                <div className="flex justify-around items-center ">
                     <div className="flex flex-col justify-between items-center">                        
                         <p>{roomUsers.length} users</p>
                         <p>Code: <span className="font-semibold">{roomId}</span></p>
@@ -280,7 +280,7 @@ const ChatRoom = ({ roomId , userName}) => {
 
         <div className="max-w-screen-lg w-full mx-auto rounded-xl relative z-10 lg:px-0 px-5">
 
-        <div className="mt-20 flex w-full items-center justify-between lg:py-5 py-2 px-5 bg-purple-600 rounded-xl z-20">
+        <div className="flex w-full items-center justify-between lg:py-5 py-2 px-5 bg-purple-600 rounded-xl z-20">
             <div className="flex items-center space-x-3">
                 {videoId ? (
                     <div>
