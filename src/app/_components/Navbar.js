@@ -28,7 +28,7 @@ const Navbar = ({ roomUsers, roomId, handleExitGroup, copyRoomId }) => {
 
     return (
         <>
-            <div className="bg-custom-gradient w-full text-white text-center py-2 fixed top-0 left-0 z-50 shadow-md">
+            <div className=" via-black w-full text-white text-center py-2 fixed top-0 left-0 z-50 shadow-md">
                 <div className="flex  md:flex-row justify-between items-center px-4">
                     <div className="text-sm md:text-base text-center md:text-left mb-2 md:mb-0">
                         <p>{roomUsers.length} users</p>
@@ -92,7 +92,7 @@ const Navbar = ({ roomUsers, roomId, handleExitGroup, copyRoomId }) => {
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Keep Dancing
+                                Keep vibing
                             </button>
                             <button
                                 onClick={handleExitConfirm}
@@ -101,7 +101,7 @@ const Navbar = ({ roomUsers, roomId, handleExitGroup, copyRoomId }) => {
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
-                                Exit Wormhole
+                                Exit Room
                             </button>
                         </div>
                     </div>

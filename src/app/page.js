@@ -39,13 +39,11 @@ const Page = () => {
           <h1 className='md:text-8xl text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r font-serif from-purple-500 to-purple-400 z-20'>Chill Zone</h1>
           <p className='lg:text-2xl text-xl font-bold text-white text-center'>music taste matters</p>
           <Image src="/hugy.png" alt="music" width={100} height={100} className='absolute -top-8 -right-20 animate-pulse' />
-          
         </div>
 
         <div className='flex items-center flex-col space-y-6'>
           <button className='bg-gradient-to-r px-10 w-full from-purple-500 z-30 to-purple-700
           text-white py-3 rounded-3xl' onClick={handleCreateRoom}>Create a room</button>
-
           <div className='flex items-center flex-col space-y-4 z-30 w-full'>
             <input 
               type="text" 
