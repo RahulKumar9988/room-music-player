@@ -7,6 +7,8 @@ import Navbar from "../Navbar";
 
 const ChatRoom = ({ roomId , userName}) => {
       const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
+      // const socket = useMemo(() => io("https://room-music-player.vercel.app"), []);
+      
     // const socket = useMemo(() => io("http://localhost:3001"), []);
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
