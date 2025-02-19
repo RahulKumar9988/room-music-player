@@ -6,9 +6,8 @@ import { v4 as uuidv4 } from "uuid";
 import Navbar from "../Navbar";
 
 const ChatRoom = ({ roomId , userName}) => {
-      const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
-      // const socket = useMemo(() => io("https://room-music-player.vercel.app"), []);
-      
+    const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
+
     // const socket = useMemo(() => io("http://localhost:3001"), []);
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
@@ -222,7 +221,7 @@ const ChatRoom = ({ roomId , userName}) => {
 
     return (
         <>
-        <div className="bg-custom-gradient flex flex-col h-[100vh] w-screen text-white relative overflow-hidden overflow-y-hidden py-2">
+        <div className="fixed bg-custom-gradient flex flex-col h-full w-screen text-white overflow-hidden">
             <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
             {/* <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div> */}
             
@@ -316,7 +315,7 @@ const ChatRoom = ({ roomId , userName}) => {
     </div>
 
     {/* Message Input */}
-    <div className="flex items-center w-full mx-auto h-10">
+    <div className="flex items-center w-full mx-auto h-14 bg-black">
         <textarea
             className="bg-black w-full h-10 p-2 border rounded-lg text-sm break-words whitespace-pre-wrap resize-none overflow-hidden max-h-[200px]"
             placeholder="Type a message..."
@@ -342,7 +341,7 @@ const ChatRoom = ({ roomId , userName}) => {
         </button>
     </div>
     </div>
-</div>
+        </div>
 
 
             {
