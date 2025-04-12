@@ -418,7 +418,7 @@ const ChatRoom = ({ roomId, userName }) => {
         {/* Chat Container */}
         <div 
             ref={scroll} 
-            className="flex flex-col w-full mx-auto overflow-y-auto rounded-xl p-2 md:p-4 scrollbar-thin scrollbar-thumb-purple-400 h-[calc(100vh-200px)] sm:h-[calc(100vh-220px)]"
+            className="flex flex-col w-full mx-auto overflow-y-auto rounded-xl p-2 md:p-4 scrollbar-thin scrollbar-thumb-purple-400 h-[calc(100vh-300px)] sm:h-[calc(100vh-220px)]"
         >
             {chat.map((msg, index) => (
                 <div key={index} className={`flex ${msg.senderId === userId ? "justify-end" : "justify-start"} mb-2`}>
