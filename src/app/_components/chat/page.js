@@ -439,7 +439,7 @@ const ChatRoom = ({ roomId, userName }) => {
                         } relative group`}
                     >
                         {/* Username with responsive font size */}
-                        <p className="text-black text-[10px] xs:text-xs sm:text-sm font-bold">
+                        <p className="text-black text-sm font-bold">
                             {msg.userName}
                         </p>
 
@@ -453,7 +453,7 @@ const ChatRoom = ({ roomId, userName }) => {
 
                         {/* Message Content */}
                         {msg.type === "text" && (
-                            <p className="whitespace-pre-wrap break-words text-xs sm:text-sm">
+                            <p className="whitespace-pre-wrap break-words text-sm ">
                                 {msg.message}
                             </p>
                         )}
