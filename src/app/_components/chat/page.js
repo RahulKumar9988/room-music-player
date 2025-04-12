@@ -418,7 +418,7 @@ const ChatRoom = ({ roomId, userName }) => {
         {/* Chat Container */}
         <div 
             ref={scroll} 
-            className="flex flex-col w-full mx-auto overflow-y-auto rounded-xl p-2 md:p-4 scrollbar-thin scrollbar-thumb-purple-400 h-[calc(100vh-200px)] sm:h-[calc(100vh-220px)]"
+            className="flex flex-col w-full mx-auto overflow-y-auto rounded-xl p-2 md:p-4 scrollbar-thin scrollbar-thumb-purple-400 h-[calc(100vh-200px)]"
         >
             {chat.map((msg, index) => (
                 <div key={index} className={`flex ${msg.senderId === userId ? "justify-end" : "justify-start"} mb-2`}>
@@ -434,12 +434,12 @@ const ChatRoom = ({ roomId, userName }) => {
                     )}
 
                     <div
-                        className={`py-1.5 px-2.5 sm:py-2 sm:px-3 max-w-[85%] xs:max-w-[90%] sm:max-w-[80%] rounded-lg text-xs sm:text-sm break-words ${
+                        className={`py-1.5 px-2.5 sm:py-2 sm:px-3 max-w-[85%] xs:max-w-[90%] sm:max-w-[80%] rounded-lg text-sm break-words ${
                             msg.senderId === userId ? "bg-purple-400 text-white" : "bg-purple-600"
                         } relative group`}
                     >
                         {/* Username with responsive font size */}
-                        <p className="text-black text-[10px] xs:text-xs sm:text-sm font-bold">
+                        <p className="text-black text-sm font-bold">
                             {msg.userName}
                         </p>
 
@@ -453,7 +453,7 @@ const ChatRoom = ({ roomId, userName }) => {
 
                         {/* Message Content */}
                         {msg.type === "text" && (
-                            <p className="whitespace-pre-wrap break-words text-xs sm:text-sm">
+                            <p className="whitespace-pre-wrap break-words text-sm">
                                 {msg.message}
                             </p>
                         )}
