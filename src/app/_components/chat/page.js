@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import Navbar from "../Navbar";
 
-const ChatRoom = ({ roomId , userName}) => {
+const ChatRoom = ({ roomId, userName }) => {
     const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
 
     // const socket = useMemo(() => io("http://localhost:3001"), []);
@@ -21,7 +21,9 @@ const ChatRoom = ({ roomId , userName}) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [videoTitle, setVideoTitle] = useState("Unknown video");
-    const scroll = useRef()
+    const [replyTo, setReplyTo] = useState(null);
+    const [textareaHeight, setTextareaHeight] = useState("40px");
+    const scroll = useRef();
     const [modal, setmodal] = useState(false);
     const [isExitModalOpen, setIsExitModalOpen] = useState(false);
     const notificationTone = useRef(null);
@@ -191,16 +193,43 @@ const ChatRoom = ({ roomId , userName}) => {
             player.playVideo();
         }
         setIsPlaying(true);
+        setmodal(false);
+    };
+
+    const handleReply = (msg) => {
+        setReplyTo(msg);
+        document.getElementById('message-input').focus();
+    };
+
+    const cancelReply = () => {
+        setReplyTo(null);
     };
 
     const sendMessage = (type = "text", content = "") => {
         if (type === "text" && message.trim()) {
-            const data = { roomId, type, message, senderId: userId, userName };
+            const data = { 
+                roomId, 
+                type, 
+                message, 
+                senderId: userId, 
+                userName,
+                replyTo: replyTo
+            };
             socket.emit("send-message", data);
             setMessage(""); // Reset the input
+            setReplyTo(null); // Clear reply after sending
+            setTextareaHeight("40px"); // Reset textarea height
         } else if (type === "media" && content) {
-            const data = { roomId, type, content, senderId: userId };
+            const data = { 
+                roomId, 
+                type, 
+                content, 
+                senderId: userId,
+                userName,
+                replyTo: replyTo
+            };
             socket.emit("send-message", data);
+            setReplyTo(null); // Clear reply after sending
         }
     };
 
@@ -217,13 +246,22 @@ const ChatRoom = ({ roomId , userName}) => {
         // Reset after 1.5 seconds
         setTimeout(() => setCopied(false), 1500);
     };
+
+    const handleTextareaChange = (e) => {
+        setMessage(e.target.value);
+        // Reset height to auto to get actual scrollHeight
+        e.target.style.height = "auto";
+        // Set new height based on scrollHeight
+        const newHeight = `${Math.min(Math.max(40, e.target.scrollHeight), 120)}px`;
+        setTextareaHeight(newHeight);
+        e.target.style.height = newHeight;
+    };
     
 
     return (
         <>
         <div className="fixed bg-custom-gradient flex flex-col h-full w-screen text-white overflow-hidden">
             <audio ref={notificationTone} src="/tone.mp3" preload="auto" />
-            {/* <div className="h-[400px] w-[400px] bg-purple-800 rounded-full blur-3xl opacity-25 absolute top-0 -right-32"></div> */}
             
             <Navbar 
                 roomUsers={roomUsers} 
@@ -232,33 +270,44 @@ const ChatRoom = ({ roomId , userName}) => {
                 copyRoomId={copyRoomId} 
             />
 
+        <div className="max-w-screen-lg w-full mx-auto rounded-xl relative z-10 px-2 sm:px-5">
 
-        <div className="max-w-screen-lg w-full mx-auto rounded-xl relative z-10 lg:px-0 px-5">
-
-        <div className="mt-24 h-10 flex w-full items-center justify-between lg:py-5 py-2 px-5 bg-purple-600 rounded-xl z-20">
-            <div className="flex items-center space-x-3">
+        <div className=" h-auto min-h-10 flex w-full items-center justify-between py-2 px-2 sm:px-5 bg-purple-600 rounded-lg sm:rounded-xl z-20">
+            <div className="flex items-center space-x-3 overflow-hidden">
                 {videoId ? (
-                    <div>
-                        {videoTitle?.length > 20 ? videoTitle?.slice(0, 20) : ""}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-3">
+                        <span className="text-xs sm:text-sm truncate max-w-32 sm:max-w-48">
+                            {videoTitle || "Unknown video"}
+                        </span>
                         <button
-                            className={`px-4 py-2 ${isPlaying ? "bg-purple-900" : "bg-purple-300"} text-white rounded-lg`}
+                            className={`px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm ${isPlaying ? "bg-purple-900" : "bg-purple-300"} text-white rounded-lg`}
                             onClick={handlePlayPause}
                         >   
                             {isPlaying ? "Pause" : "Play"}
                         </button>
                     </div>
                 ) : (
-                    <span> No music selected</span>
+                    <span className="text-xs sm:text-sm"> No music selected</span>
                 )}
             </div>
-            <Image src="/music.png" alt="music" width={30} height={30} className="cursor-pointer" onClick={() => setmodal(true)} />
+            <Image 
+                src="/music.png" 
+                alt="music" 
+                width={24} 
+                height={24} 
+                className="cursor-pointer sm:w-8 sm:h-8" 
+                onClick={() => setmodal(true)} 
+            />
         </div>
 
         {/* Hidden YouTube player */}
-        <div id="youtube-player" className="mb-4"></div>
+        <div id="youtube-player" className="hidden"></div>
 
     {/* Chat Container */}
-    <div className="flex flex-col h-[70vh] w-full mx-auto overflow-y-scroll rounded-xl p-4">
+    <div 
+        ref={scroll} 
+        className="flex flex-col h-[calc(100vh-220px)] md:h-[70vh] w-full mx-auto overflow-y-auto rounded-xl p-2 md:p-4 scrollbar-thin scrollbar-thumb-purple-400"
+    >
         {chat.map((msg, index) => (
             <div key={index} className={`flex ${msg.senderId === userId ? "justify-end" : "justify-start"} mb-2`}>
                 
@@ -268,20 +317,27 @@ const ChatRoom = ({ roomId , userName}) => {
                         alt="User"
                         width={30}
                         height={30}
-                        className="mr-2 h-7 rounded-full bg-purple-500 p-1"
+                        className="mr-2 h-7 rounded-full bg-purple-500 p-1 hidden sm:block"
                     />
-                    
                 )}
 
                 <div
-                    className={`py-2 px-3 max-w-[80%] rounded-lg text-sm break-words ${
+                    className={`py-2 px-3 max-w-[90%] sm:max-w-[80%] rounded-lg text-sm break-words ${
                         msg.senderId === userId ? "bg-purple-400 text-white" : "bg-purple-600"
-                    }`}
+                    } relative group`}
                 >
                     {/* Username with underline */}
-                    <p className="text-black text-sm font-bold">
+                    <p className="text-black text-xs sm:text-sm font-bold">
                         {msg.userName}
                     </p>
+
+                    {/* Reply content if this message is a reply */}
+                    {msg.replyTo && (
+                        <div className="bg-purple-800 bg-opacity-60 p-1 rounded-md mb-1 text-xs border-l-2 border-white">
+                            <p className="font-semibold">{msg.replyTo.userName}:</p>
+                            <p className="truncate max-w-full">{msg.replyTo.message.substring(0, 50)}{msg.replyTo.message.length > 50 ? "..." : ""}</p>
+                        </div>
+                    )}
 
                     {/* Message Content */}
                     {msg.type === "text" && (
@@ -308,68 +364,104 @@ const ChatRoom = ({ roomId , userName}) => {
                             )}
                         </>
                     )}
-                </div>
 
+                    {/* Reply button - only show on hover */}
+                    <button 
+                        onClick={() => handleReply(msg)}
+                        className="absolute -top-4 right-0 bg-purple-700 text-white text-xs px-2 py-1 rounded-t-md opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                        Reply
+                    </button>
+                </div>
             </div>
         ))}
     </div>
 
-    {/* Message Input */}
-    <div className="flex items-center w-full mx-auto h-14 bg-black">
-        <textarea
-            className="bg-black w-full h-10 p-2 border rounded-lg text-sm break-words whitespace-pre-wrap resize-none overflow-hidden max-h-[200px]"
-            placeholder="Type a message..."
-            value={message}
-            onChange={(e) => {
-                setMessage(e.target.value);
-                e.target.style.height = "auto"; // Reset height
-                e.target.style.height = `${e.target.scrollHeight}px`; // Adjust height dynamically
-            }}
-            onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                    e.target.style.height = "auto"; // Reset after sending
-                }
-            }}
-        />
-        <button
-            onClick={() => sendMessage("text")}
-            className="ml-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 text-sm"
-        >
-            Send
-        </button>
+    {/* Message Input Area with Reply Preview */}
+    <div className="flex flex-col w-full mx-auto mb-2 sm:mb-4 bg-black bg-opacity-30 rounded-lg">
+        {/* Reply preview */}
+        {replyTo && (
+            <div className="flex items-center justify-between bg-purple-800 p-2 rounded-t-lg">
+                <div className="flex-1 text-xs sm:text-sm">
+                    <span className="font-bold">Replying to {replyTo.userName}: </span>
+                    <span className="truncate">{replyTo.message.substring(0, 30)}{replyTo.message.length > 30 ? "..." : ""}</span>
+                </div>
+                <button 
+                    onClick={cancelReply}
+                    className="text-white hover:text-red-300 ml-2"
+                >
+                    ✕
+                </button>
+            </div>
+        )}
+
+        {/* Message input */}
+        <div className="flex items-center p-2">
+            <textarea
+                id="message-input"
+                className="bg-black bg-opacity-50 w-full p-2 border border-purple-400 rounded-lg text-sm break-words whitespace-pre-wrap resize-none overflow-hidden"
+                placeholder="Type a message..."
+                value={message}
+                onChange={handleTextareaChange}
+                style={{ height: textareaHeight }}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                        setTextareaHeight("40px");
+                    }
+                }}
+            />
+            <button
+                onClick={() => sendMessage("text")}
+                className="ml-2 px-3 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 text-xs sm:text-sm"
+            >
+                Send
+            </button>
+        </div>
     </div>
     </div>
         </div>
 
-
-            {
-                modal && <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-80 z-50">
-                    <button className="absolute top-4 right-4 text-white text-2xl" onClick={() => setmodal(false)}>Close</button>
+        {/* Music selection modal */}
+        {modal && (
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-80 z-50 p-4">
+                <div className="bg-purple-900 rounded-xl p-4 w-full max-w-md max-h-[80vh] overflow-y-auto">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-lg font-bold">Select Music</h2>
+                        <button 
+                            className="text-white text-xl hover:text-purple-300" 
+                            onClick={() => setmodal(false)}
+                        >
+                            ×
+                        </button>
+                    </div>
+                    
                     <div className="mb-4 flex flex-col items-center space-y-2">
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search for a song..."
-                            className="w-full p-3 border border-gray-300 rounded-lg "
+                            className="w-full p-3 border border-gray-300 rounded-lg text-black"
                         />
                         <button
                             onClick={() => searchYouTube(searchQuery)}
-                            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                            className="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
                         >
                             Search
                         </button>
 
                         {/* Display search results */}
-                        <div className="mt-4">
+                        <div className="w-full mt-4 space-y-3">
                             {searchResults.map((video) => (
-                                <div key={video.id.videoId} className="flex justify-between mb-2">
-                                    <div className=" text-white px-10"> {video.snippet.title}</div>
+                                <div key={video.id.videoId} className="flex flex-col sm:flex-row sm:items-center justify-between p-2 border border-purple-700 rounded-lg">
+                                    <div className="text-white text-sm mb-2 sm:mb-0 sm:mr-2 truncate"> 
+                                        {video.snippet.title}
+                                    </div>
                                     <button
                                         onClick={() => handleVideoSelect(video.id.videoId, video.snippet.title)}
-                                        className="px-4 py-2 bg-green-500 text-white rounded-lg"
+                                        className="px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 whitespace-nowrap"
                                     >
                                         Select
                                     </button>
@@ -378,7 +470,8 @@ const ChatRoom = ({ roomId , userName}) => {
                         </div>
                     </div>
                 </div>
-            }
+            </div>
+        )}
         </>
     );
 };

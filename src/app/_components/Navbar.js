@@ -28,7 +28,7 @@ const Navbar = ({ roomUsers, roomId, handleExitGroup, copyRoomId }) => {
 
     return (
         <>
-            <div className=" via-black w-full text-white text-center py-2 fixed top-0 left-0 z-50 shadow-md">
+            <div className="via-black w-full text-white text-center py-2 top-0 left-0 z-50 shadow-md">
                 <div className="flex  md:flex-row justify-between items-center px-4">
                     <div className="text-sm md:text-base text-center md:text-left mb-2 md:mb-0">
                         <p>{roomUsers.length} users</p>
