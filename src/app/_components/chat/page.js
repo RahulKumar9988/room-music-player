@@ -13,7 +13,6 @@ const ChatRoom = ({ roomId, userName }) => {
     const [chat, setChat] = useState([]);
     const [userId, setUserId] = useState("");
     const [copied, setCopied] = useState(false);
-    // const [userName, setUserName] = useState("");
     const [roomUsers, setRoomUsers] = useState([]);
     const [videoId, setVideoId] = useState("");
     const [player, setPlayer] = useState(null);
@@ -25,7 +24,6 @@ const ChatRoom = ({ roomId, userName }) => {
     const [textareaHeight, setTextareaHeight] = useState("40px");
     const scroll = useRef();
     const [modal, setmodal] = useState(false);
-    const [isExitModalOpen, setIsExitModalOpen] = useState(false);
     const notificationTone = useRef(null);
 
     useEffect(() => {
@@ -306,7 +304,7 @@ const ChatRoom = ({ roomId, userName }) => {
     {/* Chat Container */}
     <div 
         ref={scroll} 
-        className="flex flex-col h-[calc(100vh-220px)] md:h-[70vh] w-full mx-auto overflow-y-auto rounded-xl p-2 md:p-4 scrollbar-thin scrollbar-thumb-purple-400"
+        className="flex flex-col h-[60vh] w-full mx-auto overflow-y-auto rounded-xl p-2 md:p-4 scrollbar-thin scrollbar-thumb-purple-400"
     >
         {chat.map((msg, index) => (
             <div key={index} className={`flex ${msg.senderId === userId ? "justify-end" : "justify-start"} mb-2`}>
@@ -335,7 +333,7 @@ const ChatRoom = ({ roomId, userName }) => {
                     {msg.replyTo && (
                         <div className="bg-purple-800 bg-opacity-60 p-1 rounded-md mb-1 text-xs border-l-2 border-white">
                             <p className="font-semibold">{msg.replyTo.userName}:</p>
-                            <p className="truncate max-w-full">{msg.replyTo.message.substring(0, 50)}{msg.replyTo.message.length > 50 ? "..." : ""}</p>
+                            <p className="truncate max-w-full">{msg.replyTo.message?.substring(0, 50)}{msg.replyTo.message?.length > 50 ? "..." : ""}</p>
                         </div>
                     )}
 
@@ -384,7 +382,7 @@ const ChatRoom = ({ roomId, userName }) => {
             <div className="flex items-center justify-between bg-purple-800 p-2 rounded-t-lg">
                 <div className="flex-1 text-xs sm:text-sm">
                     <span className="font-bold">Replying to {replyTo.userName}: </span>
-                    <span className="truncate">{replyTo.message.substring(0, 30)}{replyTo.message.length > 30 ? "..." : ""}</span>
+                    <span className="truncate">{replyTo.message?.substring(0, 30)}{replyTo.message?.length > 30 ? "..." : ""}</span>
                 </div>
                 <button 
                     onClick={cancelReply}
