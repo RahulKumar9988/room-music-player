@@ -303,7 +303,7 @@
             <div className=" h-auto min-h-10 flex w-full items-center justify-between py-2 px-2 sm:px-5 bg-purple-600 rounded-lg sm:rounded-xl z-20">
                 <div className="flex items-center space-x-3 overflow-hidden">
                     {videoId ? (
-                        <div className="flex gap-6 sm:flex-row items-start sm:items-center gap-1 sm:gap-3">
+                        <div className="flex sm:flex-row items-start sm:items-center gap-1 sm:gap-3">
                             <span className="text-xs sm:text-sm truncate max-w-32 sm:max-w-48">
                                 {videoTitle || "Unknown video"}
                             </span>
