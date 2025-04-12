@@ -55,7 +55,7 @@ const ChatRoom = ({ roomId, userName }) => {
             setRoomUsers(users);
         });
 
-        socket.on("play-video", (videoId, title) => {
+        socket.on("play-video", videoId, title => {
             setVideoId(videoId);
             setVideoTitle(title || "Unknown video");
             if (player) {
