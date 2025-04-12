@@ -53,9 +53,9 @@
                 setRoomUsers(users);
             });
 
-            socket.on("play-video", (videoId, videoTitle) => {
+            socket.on("play-video", (videoId, title) => {
                 setVideoId(videoId);
-                setVideoTitle(videoTitle);
+                setVideoTitle(title || "Unknown video");
                 if (player) {
                     player.loadVideoById(videoId);
                     player.playVideo();
@@ -201,7 +201,7 @@
                     player.pauseVideo();
                 }
             } else {
-                socket.emit("play-video", roomId, videoId, videoTitle);
+                socket.emit("play-video", videoId, videoTitle);
                 setVideoTitle(videoTitle);
                 if (player) {
                     player.playVideo();
