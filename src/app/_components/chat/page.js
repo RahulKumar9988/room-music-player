@@ -417,87 +417,87 @@ const ChatRoom = ({ roomId, userName }) => {
 
         {/* Chat Container */}
         <div 
-            ref={scroll} 
-            className="flex flex-col w-full mx-auto overflow-y-auto rounded-xl p-2 md:p-4 scrollbar-thin scrollbar-thumb-purple-400 h-[calc(100vh-300px)]"
-        >
-            {chat.map((msg, index) => (
-                <div key={index} className={`flex ${msg.senderId === userId ? "justify-end" : "justify-start"} mb-2`}>
-                    
-                    {msg.senderId !== userId && (
-                        <Image
-                            src="/heart.png"
-                            alt="User"
-                            width={24}
-                            height={24}
-                            className="mr-1.5 h-6 w-6 rounded-full bg-purple-500 p-1 hidden sm:block"
-                        />
-                    )}
+    ref={scroll} 
+    className="flex flex-col w-full mx-auto overflow-y-auto rounded-xl p-2 md:p-4 scrollbar-thin scrollbar-thumb-purple-400 h-[calc(100vh-300px)]"
+>
+    {chat.map((msg, index) => (
+        <div key={index} className={`flex ${msg.senderId === userId ? "justify-end" : "justify-start"} mb-2`}>
+            
+            {msg.senderId !== userId && (
+                <Image
+                    src="/heart.png"
+                    alt="User"
+                    width={24}
+                    height={24}
+                    className="mr-1.5 h-6 w-6 rounded-full bg-purple-500 p-1 hidden sm:block"
+                />
+            )}
 
-                    <div
-                        className={`py-1.5 px-2.5 sm:py-2 sm:px-3 max-w-[85%] xs:max-w-[90%] sm:max-w-[80%] rounded-lg text-sm break-words ${
-                            msg.senderId === userId ? "bg-purple-400 text-white" : "bg-purple-600"
-                        } relative group`}
-                    >
-                        {/* Username with responsive font size */}
-                        <p className="text-black text-sm font-bold">
-                            {msg.userName}
-                        </p>
+            <div
+                className={`py-1.5 px-2.5 sm:py-2 sm:px-3 max-w-[85%] xs:max-w-[90%] sm:max-w-[80%] rounded-lg text-sm break-words ${
+                    msg.senderId === userId ? "bg-purple-400 text-white" : "bg-purple-600"
+                } relative group`}
+            >
+                {/* Username with responsive font size */}
+                <p className="text-black text-sm font-bold">
+                    {msg.userName}
+                </p>
 
-                        {/* Reply content if this message is a reply */}
-                        {msg.replyTo && (
-                            <div className="bg-purple-800 bg-opacity-60 p-1 rounded-md mb-1 text-[10px] xs:text-xs border-l-2 border-white">
-                                <p className="font-semibold">{msg.replyTo.userName}:</p>
-                                <p className="truncate max-w-full">{msg.replyTo.message?.substring(0, 30)}{msg.replyTo.message?.length > 30 ? "..." : ""}</p>
+                {/* Reply content if this message is a reply - Enhanced version */}
+                {msg.replyTo && (
+                    <div className="bg-purple-800 bg-opacity-60 p-1.5 rounded-md mb-2 text-[10px] xs:text-xs border-l-2 border-white">
+                        <p className="font-semibold text-purple-200">↩️ Reply to {msg.replyTo.userName}:</p>
+                        <p className="italic truncate max-w-full text-gray-200">"{msg.replyTo.message?.substring(0, 50)}{msg.replyTo.message?.length > 50 ? "..." : ""}"</p>
+                    </div>
+                )}
+
+                {/* Message Content */}
+                {msg.type === "text" && (
+                    <p className="whitespace-pre-wrap break-words text-sm">
+                        {msg.message}
+                    </p>
+                )}
+
+                {/* Media Handling with improved responsive behavior */}
+                {msg.type === "media" && (
+                    <>
+                        {msg.content?.startsWith("data:image") && (
+                            <div className="max-w-full overflow-hidden">
+                                <img
+                                    src={msg.content}
+                                    alt="Shared media"
+                                    className="max-w-full rounded-lg object-contain max-h-[200px] sm:max-h-[300px]"
+                                />
                             </div>
                         )}
-
-                        {/* Message Content */}
-                        {msg.type === "text" && (
-                            <p className="whitespace-pre-wrap break-words text-sm">
-                                {msg.message}
-                            </p>
+                        {msg.content?.startsWith("data:video") && (
+                            <div className="max-w-full overflow-hidden">
+                                <video 
+                                    controls 
+                                    className="max-w-full rounded-lg max-h-[200px] sm:max-h-[300px]"
+                                    controlsList="nodownload nofullscreen"
+                                    playsInline
+                                >
+                                    <source src={msg.content} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
                         )}
+                    </>
+                )}
 
-                        {/* Media Handling with improved responsive behavior */}
-                        {msg.type === "media" && (
-                            <>
-                                {msg.content?.startsWith("data:image") && (
-                                    <div className="max-w-full overflow-hidden">
-                                        <img
-                                            src={msg.content}
-                                            alt="Shared media"
-                                            className="max-w-full rounded-lg object-contain max-h-[200px] sm:max-h-[300px]"
-                                        />
-                                    </div>
-                                )}
-                                {msg.content?.startsWith("data:video") && (
-                                    <div className="max-w-full overflow-hidden">
-                                        <video 
-                                            controls 
-                                            className="max-w-full rounded-lg max-h-[200px] sm:max-h-[300px]"
-                                            controlsList="nodownload nofullscreen"
-                                            playsInline
-                                        >
-                                            <source src={msg.content} type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    </div>
-                                )}
-                            </>
-                        )}
-
-                        {/* Reply button - improved for touch */}
-                        <button 
-                            onClick={() => handleReply(msg)}
-                            className="absolute -top-4 right-0 bg-purple-700 text-white text-[10px] xs:text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-t-md opacity-0 group-hover:opacity-100 touch-action:opacity-100 transition-opacity"
-                            aria-label="Reply to message"
-                        >
-                            Reply
-                        </button>
-                    </div>
-                </div>
-            ))}
+                {/* Reply button - improved for touch */}
+                <button 
+                    onClick={() => handleReply(msg)}
+                    className="absolute -top-4 right-0 bg-purple-700 text-white text-[10px] xs:text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-t-md opacity-0 group-hover:opacity-100 touch-action:opacity-100 transition-opacity"
+                    aria-label="Reply to message"
+                >
+                    Reply
+                </button>
+            </div>
         </div>
+    ))}
+</div>
 
         {/* Message Input Area with Reply Preview */}
         <div className="flex flex-col w-full mx-auto mb-2 sm:mb-4 bg-black bg-opacity-30 rounded-lg">
