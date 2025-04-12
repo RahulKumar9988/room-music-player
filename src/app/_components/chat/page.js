@@ -28,7 +28,6 @@ const ChatRoom = ({ roomId, userName }) => {
     const [unsavedChanges, setUnsavedChanges] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
     const [navigationAttempt, setNavigationAttempt] = useState(null);
-    const playerRef = useRef(null);
 
     useEffect(() => {
         const id = uuidv4();
@@ -56,7 +55,7 @@ const ChatRoom = ({ roomId, userName }) => {
             setRoomUsers(users);
         });
 
-        socket.on("play-video", (videoId, title) => {
+        socket.on("play-video", videoId, title => {
             setVideoId(videoId);
             setVideoTitle(title || "Unknown video");
             if (player) {
@@ -189,32 +188,7 @@ const ChatRoom = ({ roomId, userName }) => {
         } else {
             window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
         }
-
-        // Add visibility change listener for background playback continuation
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
     }, []);
-
-    const handleVisibilityChange = () => {
-        // When page becomes hidden but music should keep playing
-        if (document.visibilityState === 'hidden' && isPlaying && player) {
-            // Create an audio element if it doesn't exist to keep the process alive
-            if (!playerRef.current) {
-                playerRef.current = new Audio();
-                playerRef.current.volume = 0.01;
-                playerRef.current.loop = true;
-                playerRef.current.src = '/silent.mp3'; // A silent audio file to keep audio context alive
-                playerRef.current.play().catch(e => console.error("Failed to play silent audio:", e));
-            }
-        } else if (document.visibilityState === 'visible' && playerRef.current) {
-            // When returning to the page, we can stop the silent audio
-            playerRef.current.pause();
-            playerRef.current = null;
-        }
-    };
 
     useEffect(() => {
         if (scroll.current) {
@@ -255,8 +229,6 @@ const ChatRoom = ({ roomId, userName }) => {
                     showinfo: 0,
                     fs: 0,
                     rel: 0,
-                    playsinline: 1,  // Enable inline playback on iOS
-                    enablejsapi: 1,  // Enable JS API
                 },
                 events: {
                     onReady: (event) => {
@@ -289,7 +261,7 @@ const ChatRoom = ({ roomId, userName }) => {
                 player.pauseVideo();
             }
         } else {
-            socket.emit("play-video", roomId, videoId, videoTitle);
+            socket.emit("play-video", videoId, videoTitle);
             setVideoTitle(videoTitle);
             if (player) {
                 player.playVideo();
@@ -440,12 +412,8 @@ const ChatRoom = ({ roomId, userName }) => {
             />
         </div>
 
-        {/* YouTube player - fixed position but visually hidden */}
-        <div 
-            id="youtube-player" 
-            className="fixed top-0 left-0 opacity-0 pointer-events-none" 
-            style={{ width: '1px', height: '1px', visibility: 'hidden' }}
-        ></div>
+        {/* Hidden YouTube player */}
+        <div id="youtube-player" className="hidden"></div>
 
         {/* Chat Container */}
         <div 
