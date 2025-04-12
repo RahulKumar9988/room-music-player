@@ -493,7 +493,7 @@
                             {/* Display search results */}
                             <div className="w-full mt-4 space-y-3">
                                 {searchResults.map((video) => (
-                                    <div key={video.id.videoId} className="flex flex-col sm:flex-row sm:items-center justify-between p-2 border border-purple-700 rounded-lg">
+                                    <div key={video.id.videoId} className="flex sm:items-center justify-between p-2 border border-purple-700 rounded-lg">
                                         <div className="text-white text-sm mb-2 sm:mb-0 sm:mr-2 truncate"> 
                                             {video.snippet.title}
                                         </div>
