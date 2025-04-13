@@ -6,9 +6,9 @@ import { v4 as uuidv4 } from "uuid";
 import Navbar from "../Navbar";
 
 const ChatRoom = ({ roomId, userName }) => {
-    const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
+    // const socket = useMemo(() => io("https://room-music-player-server.onrender.com"), []);
 
-    // const socket = useMemo(() => io("http://localhost:3001"), []);
+    const socket = useMemo(() => io("http://localhost:3001"), []);
     const [message, setMessage] = useState("");
     const [chat, setChat] = useState([]);
     const [userId, setUserId] = useState("");
@@ -55,12 +55,12 @@ const ChatRoom = ({ roomId, userName }) => {
             setRoomUsers(users);
         });
 
-        socket.on("play-video", videoId, title => {
+        socket.on("play-video", ( videoId, videoTitle ) => {
             setVideoId(videoId);
-            setVideoTitle(title || "Unknown video");
+            setVideoTitle(videoTitle || "no title ");
             if (player) {
-                player.loadVideoById(videoId);
-                player.playVideo();
+              player.loadVideoById(videoId);
+              player.playVideo();
             }
             setIsPlaying(true);
         });
@@ -256,18 +256,17 @@ const ChatRoom = ({ roomId, userName }) => {
         if (isPlaying) {
             socket.emit("pause-video", roomId);
             setIsPlaying(false);
-
             if (player) {
                 player.pauseVideo();
             }
         } else {
-            socket.emit("play-video", videoId, videoTitle);
-            setVideoTitle(videoTitle);
+            // Fix: Use consistent parameter order
+            socket.emit("play-video", roomId, videoId, videoTitle);
+            setIsPlaying(true);
             if (player) {
                 player.playVideo();
             }
         }
-        setIsPlaying(!isPlaying);
     };
 
     const handleVideoSelect = (videoId, videoTitle) => {
@@ -457,7 +456,7 @@ const ChatRoom = ({ roomId, userName }) => {
                             <div>
                                 {/* If this message is a reply to another message */}
                                 {msg.replyTo && (
-                                    <div className="bg-purple-800 p-1.5 rounded-md mb-1.5 text-xs border-l-2 border-white">
+                                    <div className="flex gap-1 bg-purple-800 p-1.5 rounded-md mb-1.5 text-xs border-l-2 border-white">
                                         <p className="font-semibold text-gray-300">{msg.replyTo.userName || "Unknown"}:</p>
                                         <p className="truncate text-purple-200">{msg.replyTo.message || ""}</p>
                                     </div>

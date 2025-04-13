@@ -1,7 +1,7 @@
 const io = require("socket.io")(process.env.PORT || 3001, {
   cors: {
-    // origin: "http://localhost:3000",  
-    origin: "https://room-music-player-servcer.vercel.app",
+    origin: "http://localhost:3000",  
+    // origin: "https://room-music-player-servcer.vercel.app",
   },
 });
 
@@ -49,16 +49,18 @@ io.on("connection", (socket) => {
   // Handle video play event
   socket.on("play-video", (roomId, videoId, videoTitle) => {
     if (!videoId) {
-      console.error("Received undefined videoId in play-video event");
-      return;
+        console.error("Received undefined videoId in play-video event");
+        return;
     }
-
-    console.log("play-video:", videoId, videoTitle);
-
-    roomVideoState[roomId] = { videoId, isPlaying: true };
+    
+    console.log("play-video:", roomId, videoId, videoTitle);
+    
+    roomVideoState[roomId] = { videoId, videoTitle, isPlaying: true };  
+    
+    // Broadcast to all clients in the room
     io.to(roomId).emit("play-video", videoId, videoTitle);
     io.to(roomId).emit("video-state", true);
-  });
+});
 
   // Handle video pause event
   socket.on("pause-video", (roomId) => {
@@ -74,23 +76,30 @@ io.on("connection", (socket) => {
 
   // Handle message sending
   socket.on("send-message", (data) => {
-    const { roomId, message, senderId, type, content } = data;
+    const { roomId, message, senderId, type, content, replyTo } = data;
 
     // Get userName from the stored data
     const userName = userNames[socket.id]?.userName || "Anonymous";
-
+    
     console.log("Received message:", { ...data, userName });
 
     if (!roomMessages[roomId]) {
-      roomMessages[roomId] = [];
+        roomMessages[roomId] = [];
     }
 
-    // Store the message with type
-    roomMessages[roomId].push({ type, message, senderId, content, userName });
+    // Store the message with all data including replyTo
+    roomMessages[roomId].push({ type, message, senderId, content, userName, replyTo });
 
-    // Broadcast the message to everyone in the room
-    io.to(roomId).emit("receive-message", { type, message, senderId, content, userName });
-  });
+    // Broadcast the message to everyone in the room with replyTo data
+    io.to(roomId).emit("receive-message", { 
+        type, 
+        message, 
+        senderId, 
+        content, 
+        userName, 
+        replyTo 
+    });
+});
 
   // Handle user disconnection
   socket.on("disconnect", () => {
